@@ -35,3 +35,6 @@ desktop.ini
 *.swp
 *.swo
 *~
+
+# 文章暂不公开（作者审阅中）
+docs/05-文章*.md
