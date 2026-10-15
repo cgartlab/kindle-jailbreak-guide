@@ -1,5 +1,6 @@
-# 19 步执行清单 + 11 个偏离状态的状态机
-# 对应 docs/01-越狱全流程.md 的 ## 步骤 NN · 标题
+# 越狱步骤清单（19 步）+ 偏离状态清单（11 个）
+# 步骤 id 与 docs/01-越狱全流程.md 的锚点一一对应。
+# 状态 id 与 recovery/*.md 的对应关系见 recovery/README.md。
 
 步骤:
   - id: "01"
@@ -7,18 +8,18 @@
     执行者: agent
     阶段: "0 准备"
     前置: null
-    动作: "读 <盘符>:\\system\\version.txt 解析固件版本字符串；确认 Kindle 型号（PW3/4GB）"
-    验证: "固件 ≤ 5.16.2.1.1 且能识别为 Kindle 设备（盘根有 system/ 目录）"
+    动作: "读 <盘符>:\system\version.txt（盘符以你的实际挂载为准），解析固件版本与型号"
+    验证: "固件 <= 5.16.2.1.1"
     不匹配时: "S01"
     详细说明: "docs/01-越狱全流程.md#步骤-01"
 
   - id: "02"
-    标题: "电量≥50%并移除密码锁"
+    标题: "电量>=50% 并移除密码锁"
     执行者: human
     阶段: "0 准备"
-    前置: "步骤 01 已完成且固件通过"
-    动作: "让用户确认：① 设备电量≥50%或插电；② 设置里移除设备密码锁（如有）"
-    验证: "用户明确确认两项都完成"
+    前置: null
+    动作: "确保电量 >= 50%，最好插电；移除设备密码锁"
+    验证: "手动确认"
     不匹配时: null
     详细说明: "docs/01-越狱全流程.md#步骤-02"
 
@@ -26,9 +27,9 @@
     标题: "清除根目录 .bin 残留"
     执行者: agent
     阶段: "0 准备"
-    前置: "步骤 02 已完成，盘已可访问"
-    动作: "robocopy 不适用；手动列出 <盘符>:\\*.bin 并删除；不得误删其他文件"
-    验证: "根目录 *.bin 计数为 0"
+    前置: null
+    动作: "删除 <盘符>:\*.bin（残留的更新包会干扰越狱）"
+    验证: "根目录无 .bin 文件"
     不匹配时: null
     详细说明: "docs/01-越狱全流程.md#步骤-03"
 
@@ -36,9 +37,9 @@
     标题: "全量备份设备"
     执行者: agent
     阶段: "0 准备"
-    前置: "步骤 03 已完成"
-    动作: "执行 scripts/backup-device.ps1，或 robocopy <盘符>:\\ <备份目录> /MIR /FFT /R:2 /W:5 /XJ"
-    验证: "备份目录包含 system/、documents/、fonts/ 且大小与源一致"
+    前置: null
+    动作: "运行 scripts/backup-device.ps1 镜像整个 Kindle 盘到备份目录（越狱流程会清空用户存储）"
+    验证: "备份目录存在且大小 > 100 MB"
     不匹配时: null
     详细说明: "docs/01-越狱全流程.md#步骤-04"
 
@@ -46,9 +47,9 @@
     标题: "下载安装包"
     执行者: agent
     阶段: "0 准备"
-    前置: "步骤 04 已完成（先备份再下载，防止下载中断导致设备被写）"
-    动作: "按 data/jailbreaks.yaml LanguageBreak 资产表下载各包；GitHub 包走 gh-proxy.com 镜像"
-    验证: "各包文件存在于下载目录"
+    前置: null
+    动作: "按 data/jailbreaks.yaml 的下载链接获取所有安装包到本机 scripts 同级目录"
+    验证: "所有文件下载成功"
     不匹配时: null
     详细说明: "docs/01-越狱全流程.md#步骤-05"
 
@@ -56,9 +57,9 @@
     标题: "校验安装包哈希与魔数"
     执行者: agent
     阶段: "0 准备"
-    前置: "步骤 05 已完成"
-    动作: "运行 scripts/verify-artifacts.ps1 -Dir <下载目录>；比对每个文件 SHA256 与大小；gzip 包 additionally 取前 2 字节验 1f 8b"
-    验证: "脚本输出所有文件 PASS"
+    前置: null
+    动作: "运行 scripts/verify-artifacts.ps1 对每个包做 sha256 与魔数校验"
+    验证: "sha256 匹配 data/jailbreaks.yaml 的资产表；LanguageBreak.tar.gz 魔数为 gzip 1f 8b"
     不匹配时: null
     详细说明: "docs/01-越狱全流程.md#步骤-06"
 
@@ -66,9 +67,9 @@
     标题: "解压安装包"
     执行者: agent
     阶段: "0 准备"
-    前置: "步骤 06 已完成"
-    动作: "解压 LanguageBreak.tar.gz（tar -xzf），以及 MRPI/KUAL/KOReader/weread 等包"
-    验证: "LanguageBreak\\ 目录含 .demo\\boot.flag、jb、patchedUks.sqsh；其余解压目录含预期文件"
+    前置: "06"
+    动作: "tar -xzf LanguageBreak.tar.gz 得到 update_hotfix_languagebreak.bin 与 LanguageBreak 文件夹；解压其他 zip/xz 包"
+    验证: "LanguageBreak\ 文件夹存在；.demo\boot.flag 存在；update_hotfix_languagebreak.bin 存在"
     不匹配时: null
     详细说明: "docs/01-越狱全流程.md#步骤-07"
 
@@ -76,9 +77,9 @@
     标题: "进入演示模式"
     执行者: human
     阶段: "1 越狱"
-    前置: "步骤 07 已完成"
-    动作: "让用户在 Kindle 搜索栏输入 ;enter_demo，回车后立刻长按电源键 7 秒 → 选 Restart"
-    验证: "用户报告 Kindle 重启进入演示模式（屏幕出现错误文字/'配置设备'）"
+    前置: "07"
+    动作: "Kindle 主界面顶部时间区点出搜索栏，输入 ;enter_demo 回车，立刻长按电源键 7 秒选重启"
+    验证: "设备重启后进入演示模式界面"
     不匹配时: "S04"
     详细说明: "docs/01-越狱全流程.md#步骤-08"
 
@@ -86,9 +87,9 @@
     标题: "绕过演示模式错误画面"
     执行者: human
     阶段: "1 越狱"
-    前置: "步骤 08 已完成，设备进入演示模式"
-    动作: "告诉用户秘密手势：① 两根手指并拢同时点错误文字；② 一根手指从右下→左下横扫。要求用户试三次"
-    验证: "顶部出现搜索栏"
+    前置: "08"
+    动作: "对错误文字做秘密手势：两指并拢同时点击错误文字，紧接单指从右下角滑到左下角"
+    验证: "屏幕顶部出现搜索栏"
     不匹配时: "S03"
     详细说明: "docs/01-越狱全流程.md#步骤-09"
 
@@ -96,9 +97,9 @@
     标题: "侧载内容 + 第一次拷入"
     执行者: human+agent
     阶段: "1 越狱"
-    前置: "步骤 09 已完成，顶部出现搜索栏"
-    动作: "human：搜 ;demo → 选 Sideload Content → 插 USB。agent：robocopy LanguageBreak\\ <盘符>:\\ /E /IS /IT /R:1 /W:1；校验 sha256"
-    验证: "<盘符>:\\.demo\\boot.flag / jb / patchedUks.sqsh / DONT_CHECK_BATTERY 全在"
+    前置: "09"
+    动作: ";demo 进配置菜单选 Sideload Content 插 USB，robocopy /E 拷 LanguageBreak\ 全部（含隐藏）到 F:\ 根"
+    验证: "F:\.demo\boot.flag 存在；F:\jb 存在；F:\patchedUks.sqsh 存在"
     不匹配时: "S05"
     详细说明: "docs/01-越狱全流程.md#步骤-10"
 
@@ -106,18 +107,18 @@
     标题: "转售设备 + 第二次拷入（抢时间）"
     执行者: human+agent
     阶段: "1 越狱"
-    前置: "步骤 10 已完成"
-    动作: "human：弹出→拔USB→异手势+;demo→Resell Device→确认。USB 盘出现\"请按电源按钮\"画面时 agent 立即把盘插回去并 robocopy（或 scripts/watch-and-copy.ps1 自动完成）"
-    验证: "拷入完成且 sha256 全部匹配"
-    不匹配时: "S05、S06"
+    前置: "10"
+    动作: "弹出拔掉 USB，回配置菜单（再做手势+;demo）选 Resell Device，按下确认；当 Press the Power Button 画面出现立刻插回 USB 并 robocopy 第二次"
+    验证: "第二次拷入完成后弹出，长按电源键直到重启"
+    不匹配时: "S06"
     详细说明: "docs/01-越狱全流程.md#步骤-11"
 
   - id: "12"
     标题: "选简体中文触发漏洞"
     执行者: human
     阶段: "1 越狱"
-    前置: "步骤 11 已完成，拷入验证通过"
-    动作: "让用户等待设备重启，出现语言选择界面时选简体中文（右侧列表倒数第二，pseudot 上方）"
+    前置: "11"
+    动作: "重启后出现语言选择界面（不是主界面），选 简体中文（右侧列表倒数第二，pseudot 上方）确认"
     验证: "重启过程中屏幕右上角出现白色日志文字"
     不匹配时: "S07"
     详细说明: "docs/01-越狱全流程.md#步骤-12"
@@ -126,9 +127,9 @@
     标题: "应用 hotfix"
     执行者: human
     阶段: "1 越狱"
-    前置: "步骤 12 已完成，日志文字出现"
-    动作: "搜 ;uzb → 插 USB → 拷 update_hotfix_languagebreak.bin → 弹出 → 搜 ;dsts → Update Your Kindle → 进度条跑完自动重启"
-    验证: "重启后回到正常主界面（Kindle 主屏幕有书架/菜单）"
+    前置: "12"
+    动作: ";uzb 启用 USB 访问；插 USB 拷 update_hotfix_languagebreak.bin 到 F:\ 根；弹出；;dsts 进设置选 更新您的 Kindle 确认"
+    验证: "重启后回到正常主界面"
     不匹配时: null
     详细说明: "docs/01-越狱全流程.md#步骤-13"
 
@@ -136,9 +137,9 @@
     标题: "验证越狱"
     执行者: agent
     阶段: "1 越狱"
-    前置: "步骤 13 已完成"
-    动作: "让 human 搜 ;log；agent 通过 USB 检查 F:\\ 根目录有 mkk\\、LanguageBreakRan、languagebreak_log"
-    验证: ";log 有输出 + mkk 桥接目录存在"
+    前置: "13"
+    动作: "搜索栏输入 ;log 回车"
+    验证: "屏幕右上角出现日志文字 = 桥接活跃"
     不匹配时: "S08"
     详细说明: "docs/01-越狱全流程.md#步骤-14"
 
@@ -146,9 +147,9 @@
     标题: "安装 MRPI + KUAL"
     执行者: human
     阶段: "2 装组件"
-    前置: "步骤 14 已完成"
-    动作: "解压 kual-mrinstaller → 拷 extensions/ + mrpackages/；解压 KUAL-coplate → 拷 Update_KUALBooklet_*_install.bin 到 mrpackages/；搜 ;log mrpi → \"Hush, little baby...\" → 等 UI 重启"
-    验证: "书库出现 KUAL 条目"
+    前置: "14"
+    动作: "解压 kual-mrinstaller.tar.xz 拷 extensions\ 与 mrpackages\ 到 F:\；解压 KUAL-coplate.tar.xz 拷 Update_KUALBooklet_*_install.bin 进 mrpackages\；弹出；;log mrpi 回车"
+    验证: "屏幕出现 Hush, little baby...；重启后书库有 KUAL 条目"
     不匹配时: "S09"
     详细说明: "docs/01-越狱全流程.md#步骤-15"
 
@@ -156,19 +157,19 @@
     标题: "安装 KOReader"
     执行者: agent
     阶段: "3 装阅读器"
-    前置: "步骤 15 已完成"
-    动作: "解压 koreader-kindle-legacy-*.zip → koreader/ + extensions/ + launchpad/ 全拷到根目录（覆盖）； 注意：PW3/soft-float 用 kindle-legacy，不用 kindlehf"
-    验证: "F:\\koreader\\version.log 存在；书库 KUAL → KOReader → Start KOReader 能启动"
-    不匹配时: "S10"
+    前置: "15"
+    动作: "解压 koreader-kindle-legacy-*.zip 得 koreader\ extensions\ launchpad\ 三目录拷到 F:\ 根（覆盖）；弹出"
+    验证: "KUAL 菜单能看到 KOReader 入口"
+    不匹配时: null
     详细说明: "docs/01-越狱全流程.md#步骤-16"
 
   - id: "17"
     标题: "安装微信读书插件"
     执行者: agent+human
     阶段: "3 装阅读器"
-    前置: "步骤 16 已完成"
-    动作: "agent：解压 weread.koplugin-*.zip → 仔细确认只有一层目录（koreader/plugins/weread.koplugin/main.lua），拷到 F:\\koreader\\plugins\\。human：在 KOReader 中确认顶部菜单 → 工具 → 微信读书"
-    验证: "KOReader 顶部菜单 → 工具下有 微信读书 项"
+    前置: "16"
+    动作: "解压 weread.koplugin-*.zip 拷 weread.koplugin\ 进 F:\koreader\plugins\；弹出；启动 KOReader 验证工具菜单出现 微信读书"
+    验证: "KOReader 工具菜单能看到 微信读书 条目"
     不匹配时: null
     详细说明: "docs/01-越狱全流程.md#步骤-17"
 
@@ -176,156 +177,133 @@
     标题: "阻断 OTA"
     执行者: human
     阶段: "4 阻断 OTA"
-    前置: "步骤 17 已完成，全部必需文件已就位"
-    动作: "agent：拷 BinaryRenamer\\ 到 F:\\extensions\\。human：KUAL → BinaryRenamer → Block OTA Updates → 确认 → 选 Reboot"
-    验证: "重启后 BinaryRenamer 已重命名 otaupd→otaupd~、otav3→otav3~；\"更新您的 Kindle\"按钮灰色（正常，表示已阻断）"
-    不匹配时: null
+    前置: "17"
+    动作: "解压 BinaryRenamer.zip 拷 BinaryRenamer\ 进 F:\extensions\；弹出；KUAL 里选 BinaryRenamer -> Block OTA Updates -> Reboot"
+    验证: "设置页 更新您的 Kindle 灰色或不可用（BinaryRenamer 已把 otaupd otav3 改名）"
+    不匹配时: "S11"
     详细说明: "docs/01-越狱全流程.md#步骤-18"
 
   - id: "19"
     标题: "登录微信读书"
     执行者: human
     阶段: "5 登录"
-    前置: "步骤 18 已完成"
-    动作: "手机：微信读书 App → 我 → 设置 → 微信读书 Skill → 获取 API Key。Kindle：KOReader → 工具 → 微信读书 → 微信扫码登录 → 扫码确认 → 输入 4 位验证码"
-    验证: "书架成功同步 + 可下载整本 EPUB"
+    前置: "18"
+    动作: "手机微信读书 App -> 我 -> 设置 -> 微信读书 Skill 获取 API Key；Kindle 上 KOReader -> 工具 -> 微信读书 -> 微信扫码登录；手机确认后 KOReader 里输入 4 位验证码"
+    验证: "书架加载成功"
     不匹配时: null
     详细说明: "docs/01-越狱全流程.md#步骤-19"
 
-# ── 偏离状态（不匹配时的补救剧本）──────────────────────────────────────────
-
 状态:
-
   - id: "S01"
     名称: "固件不符"
-    探测: "version.txt 固件 > 5.16.2.1.1，或固件 ≠ 本仓库验证版本"
+    探测: "version.txt 固件 > 5.16.2.1.1"
     可能原因:
       - "设备已自动升级到新固件"
-      - "用户拿错设备"
     补救:
       - "停止本流程"
-      - "引导用户去 https://kindlemodding.org/jailbreak-wizard.html 输入序列号前 8 位 + 固件版本查可用方案"
+      - "引导用户去 https://kindlemodding.org/jailbreak-wizard.html 查可用方案"
     出处: "https://kindlemodding.org/jailbreaking/Legacy/LanguageBreak.html"
 
   - id: "S02"
     名称: "无法读取固件"
-    探测: "USB 已插但找不到 system/ 目录，或 KOReader 仍在运行阻止 USB 挂载"
+    探测: "version.txt 读不到（USB 未挂载或 KOReader 运行中）"
     可能原因:
-      - "KOReader 仍在运行"
-      - "USB 线只充电、不传数据"
-      - "设备未解锁"
+      - "KOReader 还在运行，USB 不挂载"
+      - "USB 线或接口有问题"
     补救:
-      - "先退出 KOReader 回原生主界面"
-      - "重插 USB"
-      - "换数据线"
-    出处: "https://kindlemodding.org/jailbreak-faq.html"
+      - "先退出 KOReader 回原生主界面再插 USB"
+      - "换 USB 线或接口"
+      - "重启 Kindle"
+    出处: "docs/01-越狱全流程.md#坑-3"
 
   - id: "S03"
     名称: "演示模式异常"
-    探测: "屏幕下方有\"配置设备\"错误文字 + 顶部无搜索栏 + 无法退出"
+    探测: "屏幕有 本演示设备内容缺失或未联网 错误文字 + 无搜索栏"
     可能原因:
-      - "还没拷 .demo\\boot.flag（正常中间态，不是变砖）"
+      - "第一次拷入之前是正常的中间态"
     补救:
-      - "执行秘密手势：两指并拢同时点错误文字 → 一根手指从右下→左下横扫"
-      - "做三次不成就去看官方视频（搜 LanguageBreak secret gesture）"
+      - "按秘密手势：两指并拢同时点击错误文字，紧接单指从右下角滑到左下角"
     出处: "https://kindlemodding.org/jailbreaking/Legacy/LanguageBreak.html"
-    对应文档: "recovery/卡在演示模式.md"
 
   - id: "S04"
     名称: "演示模式进不去"
-    探测: ";enter_demo 没反应"
+    探测: ";enter_demo 无反应"
     可能原因:
-      - "电量低 / 未解锁 / 屏幕休眠"
+      - "电量过低"
+      - "设备有密码锁"
     补救:
-      - "根目录建空文件 DONT_CHECK_BATTERY，再搜 ;demo"
-      - "再从步骤 8 之后继续"
-    出处: "https://kindlemodding.org/jailbreaking/Legacy/LanguageBreak.html（Troubleshooting）"
-    对应文档: "recovery/卡在演示模式.md"
+      - "在 F:\ 根目录建一个空文件叫 DONT_CHECK_BATTERY，然后输入 ;demo 而不是 ;enter_demo"
+    出处: "https://kindlemodding.org/jailbreaking/Legacy/LanguageBreak.html Troubleshooting"
 
   - id: "S05"
     名称: "拷入静默失败"
-    探测: "文件存在但 sha256 与源不符"
+    探测: "文件存在但 sha256 与源不符（Windows 文件锁导致静默写失败）"
     可能原因:
-      - "Windows 文件锁：cp/Copy-Item 静默写失败但返回成功"
+      - "Windows 文件锁"
     补救:
-      - "删了再拷：Remove-Item 后 sleep 1 再 robocopy"
-      - "每次拷完 sha256 复核"
-    出处: "社区经验（qianjindelvdai/kindle-revive）"
-    对应文档: "recovery/书库没有KUAL.md"
+      - "删除目标文件再重新拷入"
+      - "拷入后对每个文件做 sha256 复核"
+    出处: "社区经验：qianjindelvdai/kindle-revive skill.md"
 
   - id: "S06"
     名称: "第二次拷入超时"
     探测: "已按电源键但盘符未出现"
     可能原因:
-      - "用户没插 USB / cables 只充电"
-      - "设备响应慢"
+      - "Resell Device 后时机太慢"
+      - "USB 已拔"
     补救:
-      - "用 scripts/watch-and-copy.ps1 轮询盘符自动拷入"
-      - "设好后下轮再试"
-    出处: "官方原文 This is time sensitive, be quick."
+      - "重启，重来步骤 11：Resell Device 一出现 Press the Power Button 画面立刻插 USB"
+    出处: "https://kindlemodding.org/jailbreaking/Legacy/LanguageBreak.html"
 
   - id: "S07"
     名称: "语言选择界面未出现"
-    探测: "重启后直接回正常主界面"
+    探测: "重启后直接回主界面"
     可能原因:
-      - "boot.flag 未就位"
-      - "选中文的时机不对"
+      - "第二次拷入不完整"
     补救:
-      - "确认 F:\\.demo\\boot.flag 及根目录 jb/patchedUks.sqsh 都在"
-      - "按 ;uzb + ;dsts 重打 hotfix"
-    出处: "社区经验"
+      - "重复步骤 9-11：手势 -> ;demo -> Resell Device -> 第二次拷入"
+    出处: "https://kindlemodding.org/jailbreaking/Legacy/LanguageBreak.html"
 
   - id: "S08"
-    名称: "桥接不活跃"
+    名称: "越狱桥接不活跃"
     探测: ";log 无输出"
     可能原因:
-      - "hotfix 未安装 / 被覆盖 / mkk 目录损坏"
+      - "hotfix 未装或已失效"
     补救:
-      - ";uzb → 拷 update_hotfix_languagebreak.bin → ;dsts → Update Your Kindle → 重启"
-      - "仍无效则完整重做步骤 01-14"
+      - ";uzb -> 插 USB 拷 update_hotfix_languagebreak.bin 到 F:\ -> 弹出 -> ;dsts -> 更新您的 Kindle"
     出处: "https://kindlemodding.org/jailbreaking/Legacy/LanguageBreak.html"
-    对应文档: "recovery/越狱桥接挂了.md"
 
   - id: "S09"
     名称: "书库没有 KUAL"
-    探测: "MRPI 安装完书库无 KUAL 条目"
+    探测: "MRPI 安装后书库无 KUAL 条目"
     可能原因:
-      - "PEKI 静默失败（PW3/5.16.2.1.1 上不索引 .jar）"
-      - "MRPI 安装未真正执行（Windows 文件锁）"
+      - "MRPI 包不完整"
+      - "拷用了 PEKI 路线（本机不可用）"
     补救:
-      - "改走 MRPI 但用 ;log mrpi（不是 ;log mpri）"
-      - "sha256 复核所有拷入文件"
-      - "Fail 时改用 MRPI+KUAL-Booklet coplate（ heavier 但稳）"
-    出处: "01-越狱全流程.md 坑 ② + 社区经验"
-    对应文档: "recovery/书库没有KUAL.md"
+      - "确认拷的是 MRPI 路线（kual-mrinstaller.tar.xz）不是 PEKI 路线"
+      - "重拷 MRPI 的 extensions\ 与 mrpackages\ 到 F:\ 根"
+      - "重拷 Update_KUALBooklet_*_install.bin 到 mrpackages\"
+      - ";log mrpi 重新触发安装"
+    出处: "社区经验（PEKI 在本机静默失败）"
 
   - id: "S10"
     名称: "USB 认不到设备"
-    探测: "KOReader 运行中插 USB 无盘符"
+    探测: "插 USB 电脑无盘符"
     可能原因:
-      - "KOReader frameworkless 启动杀了原生 UI+USB 服务"
+      - "KOReader 还在运行（KUAL 以无框架方式启动 KOReader，把 USB 存储服务停了）"
+      - "USB 线或接口问题"
     补救:
-      - "KOReader 顶部 → ≡ → 拉到底 → 退出 → 退出 KOReader → 回主界面再插 USB"
-      - "备选：KOReader 工具菜单\"启动 USB 存储\""
+      - "KOReader 顶部左上角 ≡ -> 拉到底 -> 退出 KOReader，回原生主界面再插 USB"
+      - "换 USB 线或接口"
+      - "重启 Kindle"
     出处: "https://kindlemodding.org/jailbreak-faq.html"
-    对应文档: "recovery/USB认不到设备.md"
 
   - id: "S11"
     名称: "OTA 入口失效误判"
-    探测: "\"更新您的 Kindle\"灰色不可点"
+    探测: "设置页 更新您的 Kindle 灰色不可用"
     可能原因:
-      - "BinaryRenamer 已重命名 otaupd→otaupd~、otav3→otav3~（正常，这是想要的效果）"
+      - "BinaryRenamer 已经成功执行了阻断（otaupd -> otaupd~ otav3 -> otav3~）"
     补救:
-      - "不需处理"
-      - "若要真恢复更新：KUAL → BinaryRenamer → Restore OTA Updates"
-    出处: "https://kindlemodding.org/jailbreaking/prevent-auto-update/"
-    对应文档: null
-
-# 镜像
-镜像:
-  gh_proxy: "https://gh-proxy.com/"
-  状态: "已验证可用（实测下载 GitHub Release 资产，返回 gzip 魔数 1f 8b）"
-  用法: "在 GitHub 下载链接前加 https://gh-proxy.com/"
-  未验证:
-    - "ghfast.top: 测试时被 robots.txt 403 挡住"
-    - "repo.kindlemodding.org: KMC 官方包仓库，KPM 索引页 outdated，直接用 package 全额 URL"
+      - "这是预期行为，不需要修复"
+      - "要解除阻断：KUAL -> BinaryRenamer -> Restore OTA Updates"
+    出处: "https://www.mobileread.com/forums/showthread.php?t=357438"
