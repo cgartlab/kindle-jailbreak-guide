@@ -4,7 +4,7 @@
 # 用法：
 #   .\backup-device.ps1                      # 自动扫描 D:~K:，备份到 .\backup\Kindle-YYYY-MM-DD
 #   .\backup-device.ps1 -Drive F:            # 指定盘符
-#   .\backup-device.ps1 -Drive F: -OutDir D:\KindleBackup  # 指定输出目录
+#   .\backup-device.ps1 -Drive F: -OutDir D:\MyBackup     # 指定输出目录
 # 依赖：Windows PowerShell 5.1+（UTF-8 with BOM）
 
 [CmdletBinding()]
