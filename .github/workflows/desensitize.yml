@@ -1,0 +1,20 @@
+name: 脱敏检查
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  desensitize:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 运行脱敏扫描
+        shell: pwsh
+        run: |
+          $scriptPath = Join-Path $env:GITHUB_WORKSPACE 'scripts\desensitize-check.ps1'
+          & $scriptPath -Path $env:GITHUB_WORKSPACE
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          Write-Host "脱敏检查通过：所有文本文件干净。"

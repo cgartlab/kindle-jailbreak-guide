@@ -1,0 +1,13 @@
+# 统一换行符
+* text=auto eol=lf
+
+# PowerShell 脚本用 CRLF（Windows 5.1 需要）
+*.ps1 text eol=crlf
+
+# 二进制文件标记
+*.bin binary
+*.tar.gz binary
+*.tar.xz binary
+*.zip binary
+*.keystore binary
+*.jar binary

@@ -1,0 +1,245 @@
+# 机型 x 固件 -> 越狱方案决策数据
+# 每条事实挂 source + verified_on
+# 详见 docs/99-事实核查.md
+
+方案:
+  - id: languagebreak
+    名称: LanguageBreak
+    分类: legacy
+    作者: Marek（原始漏洞 GeorgeYellow + bulltricks）
+    发布日期: "2023-11-06"
+    适用固件上限: "5.16.2.1.1"
+    适用固件下限: null
+    已核实: true
+    出处: "https://kindlemodding.org/jailbreaking/Legacy/LanguageBreak.html"
+    核查日期: "2026-10-15"
+    官方原文: "LanguageBreak will NOT work on firmwares newer than 5.16.2.1.1"
+    前置条件:
+      需要电脑: true
+      需要已注册账号: false
+      需要联网: false
+      需要有广告: false
+      需要商店可达: false
+    资产:
+      - 文件名: "LanguageBreak-16.11.23.tar.gz"
+        版本标签: "1.0.2.1"
+        下载链接: "https://github.com/notmarek/LanguageBreak/releases/download/1.0.2.1/LanguageBreak-16.11.23.tar.gz"
+        大小字节: 2539838
+        sha256: null
+        魔数: "gzip 1f 8b"
+        备注: "v1.0.2.1 是上游最新（2023-11-06）；实机已验证的是 v1.0.1（资产名 LanguageBreak.tar.gz），两者均可用。"
+      - 文件名: "LanguageBreak.tar.gz"
+        版本标签: "1.0.1"
+        下载链接: "https://github.com/notmarek/LanguageBreak/releases/download/1.0.1/LanguageBreak.tar.gz"
+        大小字节: 163260
+        sha256: "2D508D7E1F01F5FDF949005225258622F0EA3CADF28B20EC3E83B8174371B190"
+        魔数: "gzip 1f 8b"
+        备注: "实机越狱成功用的版本。"
+      - 文件名: "update_hotfix_languagebreak.bin"
+        版本标签: "1.0.1"
+        下载链接: null
+        大小字节: 160930
+        sha256: null
+        魔数: "bin"
+        备注: "越狱后持久化用。位于 LanguageBreak.tar.gz 解压后的根目录。"
+    已知风险:
+      - "同一机型（PW3 / 5.16.2.1.1）有独立失败报告（jdfesa），反复卡 Demo Mode 循环；退路是 WinterBreak2"
+      - "官方已标为 legacy / no-longer recommended，但对注册困难或商店不可达的设备仍是最优解"
+      - "5.16.3+ 固件不支持（改 hard-float）"
+    已证失败案例:
+      - 来源: "https://github.com/jdfesa/kindle-pw3-jailbreak-guide"
+        描述: "LanguageBreak 失败，改用 WinterBreak2 成功"
+    详细说明: "docs/01-越狱全流程.md"
+
+  - id: winterbreak
+    名称: WinterBreak
+    分类: current
+    作者: Hackerdude
+    发布日期: "2025-01-01"
+    适用固件上限: null
+    适用固件下限: "5.16.4"
+    已核实: true
+    出处: "https://kindlemodding.org/jailbreaking/WinterBreak/"
+    核查日期: "2026-10-15"
+    官方原文: "requires a registered device"
+    前置条件:
+      需要电脑: true
+      需要已注册账号: true
+      需要联网: true
+      需要有广告: false
+      需要商店可达: true
+    资产:
+      - 文件名: null
+        备注: "需自行从 wiki 获取"
+    已知风险:
+      - "不适用固件 5.18.1+"
+      - "国内设备注册/商店可达性未验证——qian 在国内跑通过（未提及注册障碍），但网络与商店行为才是可能的瓶颈"
+    详细说明: "https://kindlemodding.org/jailbreaking/WinterBreak/"
+
+  - id: winterbreak2
+    名称: WinterBreak2
+    分类: current
+    作者: Scam.Net + Penguins184
+    发布日期: null
+    适用固件上限: null
+    适用固件下限: "5.16.4"
+    已核实: true
+    出处: "https://kindlemodding.org/jailbreaking/WinterBreak2/"
+    核查日期: "2026-10-15"
+    官方原文: "Firmware lower than 5.16.4? Use the original WinterBreak"
+    前置条件:
+      需要电脑: true
+      需要已注册账号: false
+      需要联网: true
+      需要有广告: false
+      需要商店可达: false
+    资产:
+      - 文件名: null
+        备注: "需自行从 wiki 获取"
+    已知风险:
+      - "对 PW3 / 5.16.2.1.1 不适用（固件低于 5.16.4）"
+      - "jdfesa 在同一机型上声称成功（与官方描述矛盾，未交叉核实）"
+    详细说明: "https://kindlemodding.org/jailbreaking/WinterBreak2/"
+
+  - id: adbreak
+    名称: AdBreak
+    分类: current
+    作者: hhhhhhhhh
+    发布日期: "2025-09-24"
+    适用固件上限: null
+    适用固件下限: null
+    已核实: true
+    出处: "https://kindlemodding.org/jailbreaking/AdBreak/"
+    核查日期: "2026-10-15"
+    官方原文: "requires a registered device that has ads"
+    前置条件:
+      需要电脑: true
+      需要已注册账号: true
+      需要联网: true
+      需要有广告: true
+      需要商店可达: true
+    资产:
+      - 文件名: null
+        备注: "需自行从 wiki 获取"
+    已知风险:
+      - "要求设备带广告版本"
+    详细说明: "https://kindlemodding.org/jailbreaking/AdBreak/"
+
+  - id: springbreak
+    名称: SpringBreak
+    分类: current
+    作者: Penguins184
+    发布日期: "2026-06-22"
+    适用固件上限: null
+    适用固件下限: null
+    已核实: true
+    出处: "https://kindlemodding.org/jailbreaking/SpringBreak/"
+    核查日期: "2026-10-15"
+    官方原文: "requires a registered device"
+    前置条件:
+      需要电脑: true
+      需要已注册账号: true
+      需要联网: true
+      需要有广告: false
+      需要商店可达: true
+    资产:
+      - 文件名: null
+        备注: "需自行从 wiki 获取"
+    详细说明: "https://kindlemodding.org/jailbreaking/SpringBreak/"
+
+  - id: sanctuary
+    名称: Sanctuary
+    分类: current
+    作者: Ava + Alysa + sparklerfish
+    发布日期: "2026-06-30"
+    适用固件上限: null
+    适用固件下限: null
+    已核实: true
+    出处: "https://kindlemodding.org/jailbreaking/Sanctuary/"
+    核查日期: "2026-10-15"
+    官方原文: "requires network access (uses Kindle browser)"
+    前置条件:
+      需要电脑: true
+      需要已注册账号: false
+      需要联网: true
+      需要有广告: false
+      需要商店可达: false
+    资产:
+      - 文件名: null
+        备注: "需自行从 wiki 获取"
+    详细说明: "https://kindlemodding.org/jailbreaking/Sanctuary/"
+
+  - id: vera
+    名称: V\u00e9ra
+    分类: current
+    作者: Ava + sparklerfish
+    发布日期: "2026-08-10"
+    适用固件上限: null
+    适用固件下限: null
+    已核实: true
+    出处: "https://kindlemodding.org/jailbreaking/V\u00e9ra/"
+    核查日期: "2026-10-15"
+    前置条件:
+      需要电脑: true
+      需要已注册账号: false
+      需要联网: true
+      需要有广告: false
+      需要商店可达: false
+    资产:
+      - 文件名: null
+        备注: "需自行从 wiki 获取"
+    详细说明: "https://kindlemodding.org/jailbreaking/V\u00e9ra/"
+
+  - id: spidercat
+    名称: SpiderCat
+    分类: current
+    作者: sparklerfish
+    发布日期: "2026-09-01"
+    适用固件上限: null
+    适用固件下限: null
+    已核实: true
+    出处: "https://kindlemodding.org/jailbreaking/SpiderCat/"
+    核查日期: "2026-10-15"
+    前置条件:
+      需要电脑: true
+      需要已注册账号: false
+      需要联网: true
+      需要有广告: false
+      需要商店可达: false
+    资产:
+      - 文件名: null
+        备注: "需自行从 wiki 获取"
+    详细说明: "https://kindlemodding.org/jailbreaking/SpiderCat/"
+
+  - id: nosebleed
+    名称: Nosebleed
+    分类: current
+    作者: hhhhhhhhh
+    发布日期: "2026-03-02"
+    适用固件上限: null
+    适用固件下限: null
+    已核实: true
+    出处: "https://kindlemodding.org/jailbreaking/Nosebleed/"
+    核查日期: "2026-10-15"
+    官方原文: "requires network access; FAQ mentions effectiveness on some blacklisted devices"
+    前置条件:
+      需要电脑: true
+      需要已注册账号: false
+      需要联网: true
+      需要有广告: false
+      需要商店可达: false
+    资产:
+      - 文件名: null
+        备注: "需自行从 wiki 获取"
+    已知风险:
+      - "对本机（PW3 / 5.16.2.1.1）不适用——固件过低"
+    详细说明: "https://kindlemodding.org/jailbreaking/Nosebleed/"
+
+镜像:
+  gh_proxy: "https://gh-proxy.com/"
+  状态: "已验证可下载 GitHub Release 资产（2026-10-15 实测）"
+  用法: "在 GitHub 下载链接前加 https://gh-proxy.com/"
+  未验证:
+    - "ghfast.top: 测试时被 robots.txt 403 挡住，未验证"
+  repo_kindlemodding: "https://repo.kindlemodding.org"
+  repo_状态: "可用（KMC 官方包仓库）"
