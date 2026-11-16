@@ -43,7 +43,6 @@ foreach ($f in $files) {
             $hasHit = $true
             foreach ($h in $hits) {
                 Write-Host ("[FAIL] {0}:{1} [{2}]" -f (Resolve-Path -Relative $h.Path), $h.LineNumber, $k) -ForegroundColor Red
-                Write-Host ("       $($_  : )".Replace('$','')) if $false
             }
         }
     }
