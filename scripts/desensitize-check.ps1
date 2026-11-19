@@ -15,10 +15,12 @@ $root = (Resolve-Path $Path).Path
 
 # 检查模式（每项：名称 + 正则）
 $patterns = [ordered]@{
-    "亚马逊账号标识"        = 'am' + 'zn1_acc'
-    "亚马逊账号ID"         = 'AEL' + 'MRK'
-    "卷序列号（XXXX-XXXX）" = '[A-Z0-9]{4}-[A-Z0-9]{4}'
-    "本地绝对路径"        = 'C:\\Users|D:\\3-Resource|d:\\3-Resource'
+    # 只匹配“前缀 + 实际值”：文档里单独写成占位符说明的前缀（amzn1_acc、AELMRK）不算泄漏，
+    # 否则扫描器会把 AGENTS.md 的规则说明本身判成命中（2026-11 起 CI 一直红）。
+    "亚马逊账号标识"        = 'am' + 'zn1[._]acc[A-Za-z0-9._-]{6,}'
+    "亚马逊账号ID"         = 'AEL' + 'MRK[A-Z0-9]{4,}'
+    "卷序列号（XXXX-XXXX）" = '\b(?!XXXX-XXXX)[A-Z0-9]{4}-[A-Z0-9]{4}\b'
+    "本地绝对路径"        = 'C:\\Users\\[^\\]|D:\\3-Resource|d:\\3-Resource'
     "邮箱"               = '@gmail\.com|@qq\.com|@163\.com|@outlook\.com|@hotmail\.com'
     "sk- 前缀 API Key"    = 'sk-[a-zA-Z0-9]{20}'
     "Bearer token"       = 'Bearer\s+\S{20,}'
@@ -35,10 +37,16 @@ foreach ($e in $exts) {
 }
 $files = $files | Sort-Object -Property FullName -Unique
 
+# 需要大小写敏感匹配的规则：卷序列号只用大写，若按默认不区分大小写，
+# 任何形如 xxxx-xxxx 的小写片段（kual-mrinstaller、verify-artifacts）都会被误判。
+$caseSensitiveRules = @('卷序列号（XXXX-XXXX）')
+
 $hasHit = $false
 foreach ($f in $files) {
     foreach ($k in $patterns.Keys) {
-        $hits = Select-String -Path $f.FullName -Pattern $patterns[$k] -ErrorAction SilentlyContinue
+        $splat = @{ Path = $f.FullName; Pattern = $patterns[$k]; ErrorAction = 'SilentlyContinue' }
+        if ($caseSensitiveRules -contains $k) { $splat['CaseSensitive'] = $true }
+        $hits = Select-String @splat
         if ($hits) {
             $hasHit = $true
             foreach ($h in $hits) {
